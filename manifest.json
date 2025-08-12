@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Keyboard Navigation",
+  "version": "1.0.0",
+  "description": "Navigate YouTube videos using keyboard controls. Designed for accessibility and users with physical disabilities.",
+  "permissions": [
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
