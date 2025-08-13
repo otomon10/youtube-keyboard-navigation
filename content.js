@@ -159,8 +159,62 @@ document.addEventListener('keydown', (e) => {
             
         case 'a': // Move left (previous video)
             e.preventDefault();
-            currentIndex = Math.max(currentIndex - 1, 0);
-            highlightThumbnail(currentIndex);
+            
+            // If we're on a video page and at the first thumbnail, focus on video player
+            if (currentIndex === 0 && window.location.href.includes('/watch?v=')) {
+                // Clear highlight from current thumbnail
+                document.querySelectorAll('[data-youtube-nav-highlight]').forEach(el => {
+                    el.removeAttribute('data-youtube-nav-highlight');
+                    el.style.cssText = el.getAttribute('data-original-style') || '';
+                    el.removeAttribute('data-original-style');
+                });
+                
+                // Find and focus on the video player area
+                const videoTargets = [
+                    document.querySelector('#player-container'),
+                    document.querySelector('#movie_player'),
+                    document.querySelector('#ytd-player'),
+                    document.querySelector('video'),
+                    document.querySelector('#player'),
+                    document.querySelector('.html5-video-player'),
+                    document.querySelector('#primary #player-theater-container')
+                ];
+                
+                let videoElement = null;
+                for (const target of videoTargets) {
+                    if (target && target.getBoundingClientRect().height > 0) {
+                        videoElement = target;
+                        break;
+                    }
+                }
+                
+                if (videoElement) {
+                    // Scroll to show the entire video player
+                    videoElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                        inline: 'nearest'
+                    });
+                    
+                    // Try to focus on the video element if possible
+                    const video = videoElement.querySelector('video');
+                    if (video) {
+                        video.focus();
+                    }
+                } else {
+                    // Fallback: scroll to top of page
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+                
+                // Reset to first thumbnail to maintain navigation state
+                currentIndex = 0;
+            } else {
+                currentIndex = Math.max(currentIndex - 1, 0);
+                highlightThumbnail(currentIndex);
+            }
             break;
             
         case 's': // Move down (jump 5 videos forward)
@@ -180,8 +234,64 @@ document.addEventListener('keydown', (e) => {
             
         case 'w': // Move up (jump 5 videos backward)
             e.preventDefault();
-            currentIndex = Math.max(currentIndex - 5, 0);
-            highlightThumbnail(currentIndex);
+            
+            const newIndex = Math.max(currentIndex - 5, 0);
+            
+            // If we're on a video page and would go to index 0, focus on video player
+            if (newIndex === 0 && window.location.href.includes('/watch?v=')) {
+                // Clear highlight from current thumbnail
+                document.querySelectorAll('[data-youtube-nav-highlight]').forEach(el => {
+                    el.removeAttribute('data-youtube-nav-highlight');
+                    el.style.cssText = el.getAttribute('data-original-style') || '';
+                    el.removeAttribute('data-original-style');
+                });
+                
+                // Find and focus on the video player area
+                const videoTargets = [
+                    document.querySelector('#player-container'),
+                    document.querySelector('#movie_player'),
+                    document.querySelector('#ytd-player'),
+                    document.querySelector('video'),
+                    document.querySelector('#player'),
+                    document.querySelector('.html5-video-player'),
+                    document.querySelector('#primary #player-theater-container')
+                ];
+                
+                let videoElement = null;
+                for (const target of videoTargets) {
+                    if (target && target.getBoundingClientRect().height > 0) {
+                        videoElement = target;
+                        break;
+                    }
+                }
+                
+                if (videoElement) {
+                    // Scroll to show the entire video player
+                    videoElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                        inline: 'nearest'
+                    });
+                    
+                    // Try to focus on the video element if possible
+                    const video = videoElement.querySelector('video');
+                    if (video) {
+                        video.focus();
+                    }
+                } else {
+                    // Fallback: scroll to top of page
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+                
+                // Set to first thumbnail to maintain navigation state
+                currentIndex = 0;
+            } else {
+                currentIndex = newIndex;
+                highlightThumbnail(currentIndex);
+            }
             break;
             
         case 'enter': // Play the selected video
