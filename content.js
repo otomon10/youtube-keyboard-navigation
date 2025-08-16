@@ -78,7 +78,10 @@ function initializeNavigation() {
             currentIndex = Math.min(currentIndex, thumbnails.length - 1);
         }
         
-        highlightThumbnail(currentIndex);
+        // Only auto-highlight on non-video pages to prevent unwanted scrolling
+        if (!window.location.href.includes('/watch?v=')) {
+            highlightThumbnail(currentIndex);
+        }
         isInitialized = true;
     } else {
         isInitialized = false;
