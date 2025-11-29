@@ -9,6 +9,9 @@ A Chrome extension that makes YouTube video selection accessible through simple 
 - **Simple Controls**: Minimal learning curve with intuitive key mappings
 - **Auto-detection**: Automatically finds and highlights video thumbnails on any YouTube page
 - **Dynamic Loading**: Supports YouTube's infinite scroll by detecting new content
+- **Shorts Hiding**: Automatically hides YouTube Shorts sections for a cleaner browsing experience
+- **Compact Layout**: Collapses sidebar by default and compresses video metadata to display more thumbnails on screen
+- **Enhanced Scanning**: Reduced spacing and text sizes allow for quick visual scanning of more content
 
 ## 🎮 Controls
 
@@ -20,6 +23,11 @@ A Chrome extension that makes YouTube video selection accessible through simple 
 | `S` | Move down (jump 5 videos forward) |
 | `Enter` | Play selected video |
 | `R` | Return to YouTube home |
+
+### Page-specific behavior
+
+- **Home / Search pages**: All controls are active with visual highlighting
+- **Video watch pages**: Navigation keys (WASD, Enter) are disabled to allow YouTube's default video controls (arrow keys for seeking, etc.). Only `R` key works to return home.
 
 ## 🚀 Installation
 

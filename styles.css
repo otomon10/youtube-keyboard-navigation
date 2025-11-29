@@ -1,0 +1,268 @@
+/* Hide filter chips (News, Music, Gaming, etc.) at the top */
+ytd-feed-filter-chip-bar-renderer,
+#chips-wrapper,
+#chip-bar,
+yt-chip-cloud-renderer,
+#header.ytd-rich-grid-renderer,
+ytd-rich-grid-renderer #header,
+[page-subtype="home"] #header {
+    display: none !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Resize frosted glass to only cover masthead, not chip bar */
+#frosted-glass.with-chipbar,
+#frosted-glass {
+    height: 56px !important;
+    max-height: 56px !important;
+}
+
+/* Remove any fixed/sticky positioning that reserves space */
+ytd-browse[page-subtype="home"] #header.ytd-rich-grid-renderer,
+ytd-rich-grid-renderer #header {
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+    visibility: hidden !important;
+}
+
+/* Adjust the content to fill the space */
+ytd-rich-grid-renderer {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+ytd-rich-grid-renderer #contents {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Hide YouTube Shorts sections */
+ytd-reel-shelf-renderer,
+ytd-rich-shelf-renderer[is-shorts],
+ytd-guide-entry-renderer:has([title="Shorts"]),
+ytd-mini-guide-entry-renderer:has([aria-label*="Shorts"]),
+[aria-label*="Shorts shelf"],
+[page-subtype="home"] ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]) {
+    display: none !important;
+}
+
+/* Force mini guide (collapsed sidebar) by default */
+/* Hide the full sidebar completely */
+#guide-content.ytd-app {
+    display: none !important;
+}
+
+/* Show only the mini guide */
+ytd-mini-guide-renderer {
+    display: flex !important;
+}
+
+/* Force app to use mini guide layout */
+ytd-app[guide-persistent-and-visible] {
+    --ytd-sidebar-width: 72px !important;
+}
+
+ytd-app {
+    --ytd-sidebar-width: 72px !important;
+}
+
+/* Ensure page content takes up the space */
+ytd-page-manager {
+    margin-left: 72px !important;
+}
+
+/* Compact video metadata to show more thumbnails */
+/* Make rich-grid-media and rich-item-renderer container relative for positioning */
+ytd-rich-grid-media,
+ytd-rich-item-renderer {
+    position: relative !important;
+}
+
+/* Overlay metadata on thumbnail bottom - multiple selectors for compatibility */
+ytd-rich-grid-media #details,
+.ytd-rich-grid-media #details,
+ytd-rich-item-renderer #details.ytd-rich-grid-media {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 0.4) 90%, transparent 100%) !important;
+    padding: 6px 10px 8px 10px !important;
+    margin: 0 !important;
+    z-index: 10 !important;
+    pointer-events: none !important;
+}
+
+/* Re-enable pointer events for links */
+ytd-rich-grid-media #details a,
+.ytd-rich-grid-media #details a,
+ytd-rich-item-renderer #details.ytd-rich-grid-media a {
+    pointer-events: auto !important;
+}
+
+/* Make title white and compact */
+#video-title.ytd-rich-grid-media {
+    max-height: 3.6rem !important;
+    -webkit-line-clamp: 2 !important;
+    font-size: 1.2rem !important;
+    line-height: 1.8rem !important;
+    margin-bottom: 2px !important;
+    overflow: hidden !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+#video-title.ytd-rich-grid-media a {
+    color: #ffffff !important;
+}
+
+/* Metadata styling with white text */
+#metadata-line.ytd-video-meta-block,
+ytd-video-meta-block[rich-meta] #metadata,
+#metadata.ytd-video-meta-block {
+    font-size: 1.0rem !important;
+    line-height: 1.3rem !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Channel name styling */
+#channel-info.ytd-video-meta-block {
+    margin-top: 2px !important;
+    margin-bottom: 0 !important;
+}
+
+ytd-channel-name {
+    font-size: 1.0rem !important;
+    line-height: 1.3rem !important;
+}
+
+ytd-channel-name a,
+#text.ytd-channel-name {
+    color: rgba(255, 255, 255, 0.85) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Hide avatar completely to save space */
+#avatar.ytd-video-meta-block {
+    display: none !important;
+}
+
+/* Adjust channel info when avatar is hidden */
+#channel-info.ytd-video-meta-block {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Make metadata lines more compact */
+ytd-video-meta-block {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Compact the entire metadata block */
+#metadata.ytd-rich-grid-media {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Make video grid items more compact - no space needed below since metadata is overlaid */
+ytd-rich-item-renderer {
+    margin-bottom: 8px !important;
+}
+
+/* Ensure thumbnail area maintains proper aspect ratio and contains overlay */
+ytd-thumbnail.ytd-rich-grid-media {
+    position: relative !important;
+    display: block !important;
+}
+
+/* Ensure the content container doesn't interfere */
+ytd-rich-grid-media #dismissible {
+    display: block !important;
+}
+
+/* Make sure thumbnail link is block level */
+ytd-rich-grid-media a#thumbnail {
+    display: block !important;
+    position: relative !important;
+}
+
+/* Reduce details for other video types (search results, sidebar) */
+#details.ytd-video-renderer,
+#details.ytd-compact-video-renderer {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+#video-title.ytd-video-renderer,
+#video-title.ytd-compact-video-renderer {
+    max-height: 1.8rem !important;
+    -webkit-line-clamp: 1 !important;
+    font-size: 1.1rem !important;
+    line-height: 1.8rem !important;
+    margin-bottom: 2px !important;
+    overflow: hidden !important;
+}
+
+/* Reduce spacing in rich grid */
+ytd-rich-grid-row {
+    margin-bottom: 0 !important;
+}
+
+#contents.ytd-rich-grid-row {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Compact the rich grid renderer - force 4 items per row */
+ytd-rich-grid-renderer {
+    --ytd-rich-grid-items-per-row: 4 !important;
+    --ytd-rich-grid-posts-per-row: 4 !important;
+    --ytd-rich-grid-slim-items-per-row: 4 !important;
+}
+
+/* Force all rows to have same number of items */
+ytd-rich-grid-row,
+ytd-rich-section-renderer ytd-rich-grid-row {
+    --ytd-rich-grid-items-per-row: 4 !important;
+}
+
+/* Make rich items take 25% width (4 per row) */
+ytd-rich-item-renderer {
+    width: 24% !important;
+    max-width: 24% !important;
+    min-width: 0 !important;
+    margin: 0 0.5% 8px 0.5% !important;
+}
+
+/* Hide the first section which often has only 3 items */
+ytd-rich-grid-renderer > #contents > ytd-rich-section-renderer:first-of-type {
+    display: none !important;
+}
+
+/* Hide the "Mix" or special promotional content that takes up space */
+ytd-rich-section-renderer[is-shorts],
+ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+ytd-rich-shelf-renderer[is-shorts] {
+    display: none !important;
+}
+
+/* Reduce top masthead height to give more space for content */
+#masthead-container.ytd-app {
+    margin-bottom: 0 !important;
+}
+
+/* Reduce space between rows */
+ytd-rich-section-renderer {
+    margin-bottom: 8px !important;
+}

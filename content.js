@@ -6,8 +6,114 @@ let currentIndex = 0;
 let thumbnails = [];
 let isInitialized = false;
 
+// Force 4 items per row in grid
+function forceGridLayout() {
+    const items = document.querySelectorAll('ytd-rich-item-renderer');
+    items.forEach(item => {
+        item.style.setProperty('width', '24%', 'important');
+        item.style.setProperty('max-width', '24%', 'important');
+        item.style.setProperty('min-width', '0', 'important');
+        item.style.setProperty('margin', '0 0.5% 8px 0.5%', 'important');
+        item.style.setProperty('display', 'block', 'important');
+    });
+}
+
+// Apply overlay styles to video thumbnails
+function applyOverlayStyles() {
+    // Also force grid layout
+    forceGridLayout();
+    // Target ytd-rich-item-renderer which contains yt-lockup-view-model on YouTube home page
+    const richItemElements = document.querySelectorAll('ytd-rich-item-renderer');
+
+    richItemElements.forEach(element => {
+        // Skip if already processed
+        if (element.hasAttribute('data-overlay-applied')) {
+            return;
+        }
+
+        // Find the lockup view model (new YouTube structure)
+        const lockup = element.querySelector('yt-lockup-view-model');
+        if (!lockup) return;
+
+        element.setAttribute('data-overlay-applied', 'true');
+
+        // The lockup contains the thumbnail and metadata
+        // Find thumbnail container
+        const thumbnailContainer = lockup.querySelector('yt-thumbnail-view-model, [class*="thumbnail"]');
+
+        // Find metadata container - look for elements with title/metadata in class names
+        const metadataContainer = lockup.querySelector('[class*="details"], [class*="metadata"], yt-lockup-metadata-view-model');
+
+        if (thumbnailContainer && metadataContainer) {
+            // Make lockup relative for positioning
+            lockup.style.setProperty('position', 'relative', 'important');
+
+            // Style the metadata element to overlay on the thumbnail (bottom 20%)
+            metadataContainer.style.setProperty('position', 'absolute', 'important');
+            metadataContainer.style.setProperty('bottom', '0', 'important');
+            metadataContainer.style.setProperty('left', '0', 'important');
+            metadataContainer.style.setProperty('right', '0', 'important');
+            // Solid background for text area, gradient only above text
+            metadataContainer.style.setProperty('background', 'linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.65) 90%, transparent 100%)', 'important');
+            metadataContainer.style.setProperty('padding', '4px 6px 4px 6px', 'important');
+            metadataContainer.style.setProperty('margin', '0', 'important');
+            metadataContainer.style.setProperty('z-index', '10', 'important');
+            metadataContainer.style.setProperty('max-height', '20%', 'important');
+            metadataContainer.style.setProperty('overflow', 'hidden', 'important');
+
+            // Make all text semi-transparent white with smaller font
+            const allTextElements = metadataContainer.querySelectorAll('*');
+            allTextElements.forEach(el => {
+                el.style.setProperty('color', 'rgba(255, 255, 255, 0.7)', 'important');
+                el.style.setProperty('font-size', '10px', 'important');
+                el.style.setProperty('line-height', '1.2', 'important');
+            });
+
+            // Also style any links
+            const allLinks = metadataContainer.querySelectorAll('a');
+            allLinks.forEach(link => {
+                link.style.setProperty('color', 'rgba(255, 255, 255, 0.7)', 'important');
+            });
+        }
+    });
+
+    // Also handle older ytd-rich-grid-media structure (fallback)
+    const richGridMediaElements = document.querySelectorAll('ytd-rich-grid-media');
+    richGridMediaElements.forEach(element => {
+        if (element.hasAttribute('data-overlay-applied')) return;
+        element.setAttribute('data-overlay-applied', 'true');
+
+        element.style.setProperty('position', 'relative', 'important');
+
+        const thumbnail = element.querySelector('ytd-thumbnail');
+        const details = element.querySelector('#details');
+
+        if (thumbnail && details) {
+            details.style.setProperty('position', 'absolute', 'important');
+            details.style.setProperty('bottom', '0', 'important');
+            details.style.setProperty('left', '0', 'important');
+            details.style.setProperty('right', '0', 'important');
+            details.style.setProperty('background', 'linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.65) 90%, transparent 100%)', 'important');
+            details.style.setProperty('padding', '4px 6px 4px 6px', 'important');
+            details.style.setProperty('margin', '0', 'important');
+            details.style.setProperty('z-index', '10', 'important');
+            details.style.setProperty('max-height', '20%', 'important');
+            details.style.setProperty('overflow', 'hidden', 'important');
+
+            const allTextElements = details.querySelectorAll('*');
+            allTextElements.forEach(el => {
+                el.style.setProperty('color', 'rgba(255, 255, 255, 0.7)', 'important');
+                el.style.setProperty('font-size', '10px', 'important');
+                el.style.setProperty('line-height', '1.2', 'important');
+            });
+        }
+    });
+}
+
 // Initialize navigation system
 function initializeNavigation() {
+    // Apply overlay styles
+    applyOverlayStyles();
     // Find all video elements on the page
     const allElements = document.querySelectorAll('ytd-compact-video-renderer, ytd-rich-item-renderer, ytd-video-renderer');
     
@@ -106,16 +212,12 @@ function highlightThumbnail(index) {
         thumb.setAttribute('data-original-style', thumb.style.cssText);
         thumb.setAttribute('data-youtube-nav-highlight', 'true');
         
-        // Apply bright green highlight with glow effect
+        // Apply bright green highlight with glow effect (no layout shift)
         const highlightStyle = `
-            border: 8px solid #00FF00 !important;
-            box-shadow: 0 0 30px #00FF00 !important;
-            outline: 4px solid #00FF00 !important;
-            outline-offset: 4px !important;
-            transform: scale(1.05) !important;
+            box-shadow: 0 0 0 6px #00FF00, 0 0 30px #00FF00 !important;
+            outline: none !important;
             z-index: 9999 !important;
             position: relative !important;
-            background-color: rgba(0, 255, 0, 0.1) !important;
         `;
         
         thumb.style.cssText += highlightStyle;
@@ -130,24 +232,33 @@ function highlightThumbnail(index) {
 
 // Handle all keyboard navigation events
 document.addEventListener('keydown', (e) => {
+    // Check if we're on a video watch page
+    const isVideoPage = window.location.href.includes('/watch?v=');
+
+    // On video pages, only allow 'r' key (return to home)
+    // Disable all navigation (WASD) and highlighting to not interfere with video controls
+    if (isVideoPage && ['a', 'd', 'w', 's'].includes(e.key.toLowerCase())) {
+        return; // Let YouTube handle these keys
+    }
+
     // Initialize if not ready
     if (!isInitialized) {
         initializeNavigation();
         if (!isInitialized) return;
     }
-    
+
     // No thumbnails available
     if (thumbnails.length === 0) return;
-    
+
     switch(e.key.toLowerCase()) {
         case 'd': // Move right (next video)
             e.preventDefault();
-            
+
             // Auto-load more content when near the end
             if (currentIndex >= thumbnails.length - 3) {
                 const oldLength = thumbnails.length;
                 initializeNavigation();
-                
+
                 if (thumbnails.length <= oldLength) {
                     currentIndex = Math.min(currentIndex, thumbnails.length - 1);
                 } else {
@@ -156,148 +267,44 @@ document.addEventListener('keydown', (e) => {
             } else {
                 currentIndex = Math.min(currentIndex + 1, thumbnails.length - 1);
             }
-            
+
             highlightThumbnail(currentIndex);
             break;
-            
+
         case 'a': // Move left (previous video)
             e.preventDefault();
-            
-            // If we're on a video page and at the first thumbnail, focus on video player
-            if (currentIndex === 0 && window.location.href.includes('/watch?v=')) {
-                // Clear highlight from current thumbnail
-                document.querySelectorAll('[data-youtube-nav-highlight]').forEach(el => {
-                    el.removeAttribute('data-youtube-nav-highlight');
-                    el.style.cssText = el.getAttribute('data-original-style') || '';
-                    el.removeAttribute('data-original-style');
-                });
-                
-                // Find and focus on the video player area
-                const videoTargets = [
-                    document.querySelector('#player-container'),
-                    document.querySelector('#movie_player'),
-                    document.querySelector('#ytd-player'),
-                    document.querySelector('video'),
-                    document.querySelector('#player'),
-                    document.querySelector('.html5-video-player'),
-                    document.querySelector('#primary #player-theater-container')
-                ];
-                
-                let videoElement = null;
-                for (const target of videoTargets) {
-                    if (target && target.getBoundingClientRect().height > 0) {
-                        videoElement = target;
-                        break;
-                    }
-                }
-                
-                if (videoElement) {
-                    // Scroll to show the entire video player
-                    videoElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                        inline: 'nearest'
-                    });
-                    
-                    // Try to focus on the video element if possible
-                    const video = videoElement.querySelector('video');
-                    if (video) {
-                        video.focus();
-                    }
-                } else {
-                    // Fallback: scroll to top of page
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                }
-                
-                // Reset to first thumbnail to maintain navigation state
-                currentIndex = 0;
-            } else {
-                currentIndex = Math.max(currentIndex - 1, 0);
-                highlightThumbnail(currentIndex);
-            }
+            currentIndex = Math.max(currentIndex - 1, 0);
+            highlightThumbnail(currentIndex);
             break;
-            
+
         case 's': // Move down (jump 5 videos forward)
             e.preventDefault();
-            
+
             const oldIndex = currentIndex;
             currentIndex = Math.min(currentIndex + 5, thumbnails.length - 1);
-            
+
             // Auto-load more content when jumping near the end
             if (currentIndex >= thumbnails.length - 3) {
                 initializeNavigation();
                 currentIndex = Math.min(oldIndex + 5, thumbnails.length - 1);
             }
-            
+
+            highlightThumbnail(currentIndex);
+            break;
+
+        case 'w': // Move up (jump 5 videos backward)
+            e.preventDefault();
+            currentIndex = Math.max(currentIndex - 5, 0);
             highlightThumbnail(currentIndex);
             break;
             
-        case 'w': // Move up (jump 5 videos backward)
-            e.preventDefault();
-            
-            const newIndex = Math.max(currentIndex - 5, 0);
-            
-            // If we're on a video page and would go to index 0, focus on video player
-            if (newIndex === 0 && window.location.href.includes('/watch?v=')) {
-                // Clear highlight from current thumbnail
-                document.querySelectorAll('[data-youtube-nav-highlight]').forEach(el => {
-                    el.removeAttribute('data-youtube-nav-highlight');
-                    el.style.cssText = el.getAttribute('data-original-style') || '';
-                    el.removeAttribute('data-original-style');
-                });
-                
-                // Find and focus on the video player area
-                const videoTargets = [
-                    document.querySelector('#player-container'),
-                    document.querySelector('#movie_player'),
-                    document.querySelector('#ytd-player'),
-                    document.querySelector('video'),
-                    document.querySelector('#player'),
-                    document.querySelector('.html5-video-player'),
-                    document.querySelector('#primary #player-theater-container')
-                ];
-                
-                let videoElement = null;
-                for (const target of videoTargets) {
-                    if (target && target.getBoundingClientRect().height > 0) {
-                        videoElement = target;
-                        break;
-                    }
-                }
-                
-                if (videoElement) {
-                    // Scroll to show the entire video player
-                    videoElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                        inline: 'nearest'
-                    });
-                    
-                    // Try to focus on the video element if possible
-                    const video = videoElement.querySelector('video');
-                    if (video) {
-                        video.focus();
-                    }
-                } else {
-                    // Fallback: scroll to top of page
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                }
-                
-                // Set to first thumbnail to maintain navigation state
-                currentIndex = 0;
-            } else {
-                currentIndex = newIndex;
-                highlightThumbnail(currentIndex);
-            }
-            break;
-            
         case 'enter': // Play the selected video
+            // Only allow Enter key on non-video pages (home, search results, etc.)
+            // Disabled on video watch pages to avoid interfering with video playback controls
+            if (window.location.href.includes('/watch?v=')) {
+                return; // Exit early on video pages
+            }
+
             if (thumbnails[currentIndex]) {
                 e.preventDefault();
                 const thumb = thumbnails[currentIndex];
@@ -356,14 +363,26 @@ document.addEventListener('keydown', (e) => {
             break;
             
         case 'r': // Return to YouTube home page
+            // Only allow on video watch pages, not on home page
+            const currentUrl = window.location.href;
+            const isHomePage = currentUrl === 'https://www.youtube.com/' ||
+                              currentUrl === 'https://www.youtube.com' ||
+                              currentUrl.match(/^https:\/\/www\.youtube\.com\/?\?/);
+
+            if (isHomePage) {
+                return; // Exit early if already on home page
+            }
+
             e.preventDefault();
             window.location.href = 'https://www.youtube.com';
             break;
     }
 });
 
-// Monitor YouTube's single-page-app navigation
+// Monitor YouTube's single-page-app navigation and apply overlay styles
 let lastUrl = location.href;
+let overlayStyleTimeout = null;
+
 new MutationObserver(() => {
     const currentUrl = location.href;
     if (currentUrl !== lastUrl) {
@@ -373,6 +392,14 @@ new MutationObserver(() => {
             initializeNavigation();
         }, 1000);
     }
+
+    // Apply overlay styles with throttling to avoid performance issues
+    if (overlayStyleTimeout) {
+        clearTimeout(overlayStyleTimeout);
+    }
+    overlayStyleTimeout = setTimeout(() => {
+        applyOverlayStyles();
+    }, 500);
 }).observe(document.body, { childList: true, subtree: true });
 
 // Initialize the extension with multiple timing strategies for reliability
@@ -406,4 +433,6 @@ setInterval(() => {
     if (!isInitialized || thumbnails.length === 0) {
         initializeNavigation();
     }
+    // Also apply overlay styles periodically
+    applyOverlayStyles();
 }, 5000);
