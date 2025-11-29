@@ -25,6 +25,11 @@ Thumbs.db
 node_modules/
 npm-debug.log*
 
+# Test results
+test-results/
+*.png
+*.jpg
+
 # Temporary files
 *~
 *.tmp
