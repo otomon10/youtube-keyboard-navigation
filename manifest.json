@@ -4,13 +4,20 @@
   "version": "1.0.0",
   "description": "Navigate YouTube videos using keyboard controls. Designed for accessibility and users with physical disabilities.",
   "permissions": [
-    "activeTab"
+    "storage"
   ],
   "content_scripts": [
     {
-      "matches": ["*://www.youtube.com/*"],
-      "js": ["content.js"],
-      "css": ["styles.css"]
+      "matches": [
+        "*://www.youtube.com/*"
+      ],
+      "js": [
+        "settings.js",
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ]
     }
   ]
 }

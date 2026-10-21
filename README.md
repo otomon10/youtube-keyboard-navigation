@@ -5,12 +5,14 @@ A Chrome extension that makes YouTube video selection accessible through simple 
 ## ✨ Features
 
 - **WASD Navigation**: Move through YouTube video thumbnails using familiar gaming controls
-- **Visual Highlighting**: Selected videos are highlighted with a bright green border for clear visibility
+- **Visual Highlighting**: Selected videos have a bright green border and a quick, adjustable zoom that respects reduced-motion preferences
+- **Saved Settings**: Open **拡張設定** below **You / マイページ** in either sidebar layout to toggle all navigation and layout changes or adjust selection zoom from 0% to 20% (20% by default). Changes apply immediately and are saved locally in Chrome. The settings button remains available when disabled.
 - **Simple Controls**: Minimal learning curve with intuitive key mappings
 - **Auto-detection**: Automatically finds and highlights video thumbnails on any YouTube page
 - **Dynamic Loading**: Supports YouTube's infinite scroll by detecting new content
+- **Focused Home Feed**: Hides featured shelves such as Top news and More topics without dismissing them manually
 - **Shorts Hiding**: Automatically hides YouTube Shorts sections for a cleaner browsing experience
-- **Compact Layout**: Keeps YouTube's sidebar controls and compresses video metadata to display more thumbnails on screen
+- **Compact Layout**: Keeps YouTube's sidebar controls and keeps unselected thumbnails clear and slides channel icons, two-line titles, and metadata over a translucent gradient when selected, hovered, or keyboard-focused
 - **Enhanced Scanning**: Reduced spacing and text sizes allow for quick visual scanning of more content
 
 ## 🎮 Controls
@@ -23,6 +25,8 @@ A Chrome extension that makes YouTube video selection accessible through simple 
 | `S` | Move down (jump 5 videos forward) |
 | `Enter` | Play selected video |
 | `R` | Return to YouTube home |
+
+Typing in inputs, using buttons, or opening the extension settings pauses navigation shortcuts.
 
 ### Page-specific behavior
 
