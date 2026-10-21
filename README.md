@@ -10,7 +10,7 @@ A Chrome extension that makes YouTube video selection accessible through simple 
 - **Auto-detection**: Automatically finds and highlights video thumbnails on any YouTube page
 - **Dynamic Loading**: Supports YouTube's infinite scroll by detecting new content
 - **Shorts Hiding**: Automatically hides YouTube Shorts sections for a cleaner browsing experience
-- **Compact Layout**: Collapses sidebar by default and compresses video metadata to display more thumbnails on screen
+- **Compact Layout**: Keeps YouTube's sidebar controls and compresses video metadata to display more thumbnails on screen
 - **Enhanced Scanning**: Reduced spacing and text sizes allow for quick visual scanning of more content
 
 ## 🎮 Controls

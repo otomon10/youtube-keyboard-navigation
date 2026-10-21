@@ -55,31 +55,6 @@ ytd-mini-guide-entry-renderer:has([aria-label*="Shorts"]),
     display: none !important;
 }
 
-/* Force mini guide (collapsed sidebar) by default */
-/* Hide the full sidebar completely */
-#guide-content.ytd-app {
-    display: none !important;
-}
-
-/* Show only the mini guide */
-ytd-mini-guide-renderer {
-    display: flex !important;
-}
-
-/* Force app to use mini guide layout */
-ytd-app[guide-persistent-and-visible] {
-    --ytd-sidebar-width: 72px !important;
-}
-
-ytd-app {
-    --ytd-sidebar-width: 72px !important;
-}
-
-/* Ensure page content takes up the space */
-ytd-page-manager {
-    margin-left: 72px !important;
-}
-
 /* Compact video metadata to show more thumbnails */
 /* Make rich-grid-media and rich-item-renderer container relative for positioning */
 ytd-rich-grid-media,
