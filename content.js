@@ -221,13 +221,106 @@ function highlightThumbnail(index) {
         `;
         
         thumb.style.cssText += highlightStyle;
-        
+
         // Smoothly scroll the selected element into view
         thumb.scrollIntoView({
-            behavior: 'smooth', 
+            behavior: 'smooth',
             block: 'center'
         });
+
+        // Trigger YouTube's hover preview
+        triggerHoverPreview(thumb);
     }
+}
+
+// Store the current preview element to stop it later
+var currentPreviewElement = null;
+
+// Stop YouTube's hover preview on the previous thumbnail
+function stopHoverPreview() {
+    // Remove force hover class from all elements
+    document.querySelectorAll('.ytThumbnailHoverOverlayViewModelHostForceHover').forEach(function(el) {
+        el.classList.remove('ytThumbnailHoverOverlayViewModelHostForceHover');
+    });
+
+    // Dispatch mouseleave on the previous element
+    if (currentPreviewElement) {
+        var mouseLeave = new MouseEvent('mouseleave', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        });
+        var mouseOut = new MouseEvent('mouseout', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        });
+        currentPreviewElement.dispatchEvent(mouseLeave);
+        currentPreviewElement.dispatchEvent(mouseOut);
+        currentPreviewElement = null;
+    }
+}
+
+// Trigger YouTube's hover preview on the selected thumbnail
+function triggerHoverPreview(element) {
+    // Stop any existing preview first
+    stopHoverPreview();
+
+    // Find the thumbnail container - try multiple selectors
+    var selectors = [
+        'yt-thumbnail-view-model',
+        'ytd-thumbnail',
+        '#thumbnail',
+        'a#thumbnail',
+        '.ytd-thumbnail',
+        '[id="thumbnail"]'
+    ];
+
+    var target = null;
+    for (var i = 0; i < selectors.length; i++) {
+        target = element.querySelector(selectors[i]);
+        if (target) break;
+    }
+
+    if (!target) target = element;
+    currentPreviewElement = target;
+
+    // Dispatch mouse events to multiple potential targets
+    var targets = [target, element];
+    var lockup = element.querySelector('yt-lockup-view-model');
+    if (lockup) targets.push(lockup);
+
+    targets.forEach(function(t) {
+        var rect = t.getBoundingClientRect();
+        var centerX = rect.left + rect.width / 2;
+        var centerY = rect.top + rect.height / 2;
+
+        var mouseEnter = new MouseEvent('mouseenter', {
+            bubbles: true,
+            cancelable: true,
+            clientX: centerX,
+            clientY: centerY,
+            view: window
+        });
+        var mouseOver = new MouseEvent('mouseover', {
+            bubbles: true,
+            cancelable: true,
+            clientX: centerX,
+            clientY: centerY,
+            view: window
+        });
+
+        t.dispatchEvent(mouseEnter);
+        t.dispatchEvent(mouseOver);
+    });
+
+    // Wait a bit then try to add the force hover class
+    setTimeout(function() {
+        var hoverOverlay = element.querySelector('thumbnail-hover-overlay-view-model');
+        if (hoverOverlay) {
+            hoverOverlay.classList.add('ytThumbnailHoverOverlayViewModelHostForceHover');
+        }
+    }, 100);
 }
 
 // Handle all keyboard navigation events
