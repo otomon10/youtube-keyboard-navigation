@@ -216,7 +216,6 @@ function highlightThumbnail(index) {
         const highlightStyle = `
             box-shadow: 0 0 0 6px #00FF00, 0 0 30px #00FF00 !important;
             outline: none !important;
-            z-index: 9999 !important;
             position: relative !important;
         `;
         

@@ -1,3 +1,14 @@
+/* Keep the selection ring above previews without raising the thumbnail. */
+[data-youtube-nav-highlight]::after {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    outline: 6px solid #00FF00 !important;
+    border-radius: inherit !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+}
+
 /* Hide filter chips (News, Music, Gaming, etc.) at the top */
 ytd-feed-filter-chip-bar-renderer,
 #chips-wrapper,
