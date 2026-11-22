@@ -246,18 +246,29 @@ function triggerHoverPreview(element) {
 document.addEventListener('keydown', (e) => {
     if (!navigationEnabled || youtubeNavSettings.isOpen || e.defaultPrevented ||
         e.ctrlKey || e.altKey || e.metaKey) return;
+    const key = e.key.toLowerCase();
+    if (!['a', 'd', 'w', 's', 'enter', 'r'].includes(key)) return;
+
+    const pathname = window.location.pathname;
+    const isVideoPage = pathname === '/watch';
+
+    // A player button can keep focus after entering fullscreen.
+    const fullscreenElement = key === 'r' && isVideoPage ? document.fullscreenElement : null;
     if (e.composedPath().some(node => node instanceof Element &&
-        (node.matches('input, textarea, select, button, [role="textbox"], [data-youtube-nav-settings-entry]') || node.isContentEditable))) return;
-    if (!['a', 'd', 'w', 's', 'enter', 'r'].includes(e.key.toLowerCase())) return;
+        (node.isContentEditable ||
+            node.matches('input, textarea, select, [role="textbox"], [data-youtube-nav-settings-entry]') ||
+            (node.matches('button') && !fullscreenElement?.contains(node))))) return;
 
-    // Check if we're on a video watch page
-    const isVideoPage = window.location.href.includes('/watch?v=');
-
-    // On video pages, only allow 'r' key (return to home)
-    // Disable all navigation (WASD) and highlighting to not interfere with video controls
-    if (isVideoPage && ['a', 'd', 'w', 's'].includes(e.key.toLowerCase())) {
-        return; // Let YouTube handle these keys
+    // Returning home does not depend on the list of videos.
+    if (key === 'r') {
+        if (pathname === '/') return;
+        e.preventDefault();
+        window.location.href = 'https://www.youtube.com';
+        return;
     }
+
+    // Leave the remaining keys to YouTube on video watch pages.
+    if (isVideoPage) return;
 
     // Initialize if not ready
     if (!isInitialized) {
@@ -268,7 +279,7 @@ document.addEventListener('keydown', (e) => {
     // No thumbnails available
     if (thumbnails.length === 0) return;
 
-    switch(e.key.toLowerCase()) {
+    switch (key) {
         case 'd': // Move right (next video)
             e.preventDefault();
 
@@ -317,12 +328,6 @@ document.addEventListener('keydown', (e) => {
             break;
             
         case 'enter': // Play the selected video
-            // Only allow Enter key on non-video pages (home, search results, etc.)
-            // Disabled on video watch pages to avoid interfering with video playback controls
-            if (window.location.href.includes('/watch?v=')) {
-                return; // Exit early on video pages
-            }
-
             if (thumbnails[currentIndex]) {
                 e.preventDefault();
                 const thumb = thumbnails[currentIndex];
@@ -378,21 +383,6 @@ document.addEventListener('keydown', (e) => {
                     }
                 }
             }
-            break;
-            
-        case 'r': // Return to YouTube home page
-            // Only allow on video watch pages, not on home page
-            const currentUrl = window.location.href;
-            const isHomePage = currentUrl === 'https://www.youtube.com/' ||
-                              currentUrl === 'https://www.youtube.com' ||
-                              currentUrl.match(/^https:\/\/www\.youtube\.com\/?\?/);
-
-            if (isHomePage) {
-                return; // Exit early if already on home page
-            }
-
-            e.preventDefault();
-            window.location.href = 'https://www.youtube.com';
             break;
     }
 });
